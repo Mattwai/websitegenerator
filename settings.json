@@ -1,11 +1,11 @@
 {
   "template": "templates/electrician",
-  "template_name": "Electrician \u00b7 English template",
+  "template_name": "Electrician · English template",
   "template_edit_policy": "business-details-and-theme-only",
   "dashboard_port": 4310,
   "batch_size": 5,
-  "requested_workers": 5,
-  "vercel_scope": "albertshineys-projects",
+  "requested_workers": 3,
+  "sender_file": "sender.local.json",
   "vercel_cli": [
     "pnpm",
     "dlx",
@@ -14,32 +14,21 @@
   "firecrawl_env_file": ".env",
   "max_scrape_pages_per_business": 5,
   "max_discovery_candidates": 20,
-  "sender": {
-    "name": "Albert Shiney",
-    "phone": "<YOUR_PHONE>",
-    "email": "albert@shiney.ai",
-    "first_name": "Albert",
-    "last_name": "Shiney"
-  },
   "outreach": {
-    "submit_by_default": true,
+    "auto_submit": false,
     "include_preview_link": true,
     "language": "en",
-    "offer": "Website is free; the business pays for hosting.",
-    "skip_required_surname": false,
-    "allow_inspection_forms": true,
+    "allow_inspection_forms": false,
     "skip_captchas": true,
-    "complete_after_submit": true,
-    "message_mode": "fixed"
+    "message_mode": "template"
   },
-  "worker_model": "gpt-5.6-terra",
-  "worker_reasoning_effort": "low",
-  "visible_worker_browsers": true,
+  "worker_model": "sonnet",
+  "browser": "chrome-devtools-mcp",
   "build_mode": "quick-template",
   "default_template": "electrician",
   "templates": {
     "electrician": {
-      "name": "Electrician \u00b7 base design",
+      "name": "Electrician · base design",
       "path": "templates/electrician"
     }
   },
@@ -53,6 +42,7 @@
     "theme_color"
   ],
   "scouting": {
+    "discovery_start_page": 10,
     "screening_mode": "firecrawl-first",
     "initial_pages_per_business": 2,
     "max_concurrent_business_scrapes": 2,

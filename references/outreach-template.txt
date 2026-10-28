@@ -1,0 +1,15 @@
+Hi,
+
+Your website is decent, but looks a little old, so I made an updated version:
+
+{preview_url}
+
+{offer}
+
+If you'd like it, {contact_line}.
+
+Best,
+{first_name}
+{signature}
+
+Not interested? Reply "no thanks" and I won't contact you again.

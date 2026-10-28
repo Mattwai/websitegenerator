@@ -108,7 +108,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center gap-3">
             <a href={SITE.phoneHref} className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm hover:bg-white/15 transition"><Phone className="h-3.5 w-3.5" /> {SITE.phone}</a>
             <a href={SITE.emailHref} className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm hover:bg-white/15 transition"><Mail className="h-3.5 w-3.5" /> Send email</a>
-            <span className="text-white/50 text-sm">Website concept by Albert</span>
+            <span className="text-white/50 text-sm">Website concept preview</span>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-white/50 text-xs font-mono">
             <span>Copyright © {new Date().getFullYear()} - {SITE.name}</span>

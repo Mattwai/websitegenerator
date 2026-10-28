@@ -1,6 +1,6 @@
 # Firecrawl-first prospect screening
 
-Use this for the candidate-screening stage of real batches. Discovery still uses Google in `iab` with the assigned city/state and page-10 rule. Firecrawl replaces routine original-site browsing, not final public-preview verification or submission. Never use it to evade a browser approval, solve CAPTCHA, fill a form or send outreach.
+Use this for the candidate-screening stage of real batches. Discovery still uses Google in the Chrome DevTools MCP browser with the assigned city/state and the configured start page (default 10). Firecrawl replaces routine original-site browsing, not final public-preview verification or submission. Never use it to evade a browser approval, solve CAPTCHA, fill a form or send outreach.
 
 ## One reusable cache per business
 

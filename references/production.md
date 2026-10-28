@@ -22,7 +22,7 @@ After the command succeeds, continue directly to verification, deployment and ou
 
 ## Prepare once after editing the template
 
-Edit `templates/electrician/`, preserving the template's visual design. User-facing copy and URLs are English. Stock images are bundled locally and described as illustrative, never as the prospect’s team or work. Their source and licence information is in `stock-images.json`; the imagery guidance comes from Albert’s `~/.claude/skills/build-premium-website/SKILL.md`.
+Edit `templates/electrician/`, preserving the template's visual design. User-facing copy and URLs are English. Stock images are bundled locally and described as illustrative, never as the prospect’s team or work. Their source and licence information is in `stock-images.json`; the imagery guidance came from the upstream author's own `build-premium-website` skill (not included in this fork).
 
 ```sh
 python3 tools/quick_site.py prepare --template electrician
@@ -38,13 +38,13 @@ The approximately 30-second goal covers applying the collected details and creat
 
 ## Vercel
 
-Read-only preflight confirmed configuration should use the existing CLI wrapper (`pnpm dlx vercel@59.16.0`) and scope `albertshineys-projects`; recheck availability at runtime. Exact CLI behavior: [deploy](https://vercel.com/docs/cli/deploy), [global options](https://vercel.com/docs/cli/global-options). Firecrawl uses [v2 scrape](https://docs.firecrawl.dev/api-reference/endpoint/scrape).
+Use the CLI wrapper (`pnpm dlx vercel@59.16.0`) with the operator's scope from `sender.local.json` (`vercel_scope`, written `SCOPE` below); confirm it read-only with `whoami` and `teams ls` at runtime. Exact CLI behavior: [deploy](https://vercel.com/docs/cli/deploy), [global options](https://vercel.com/docs/cli/global-options). Firecrawl uses [v2 scrape](https://docs.firecrawl.dev/api-reference/endpoint/scrape).
 
 Create a new project named `revamp-JOB_ID` from the exact `site` path returned by the generator (normally `runs/quick/GENERATED_ID/site`), with no copied `.vercel` folder or env variables. Link explicitly to that project and the configured scope using CLI help for installed syntax. For example, from the copy:
 
 ```sh
-pnpm dlx vercel@59.16.0 link --yes --project revamp-JOB_ID --scope albertshineys-projects
-pnpm dlx vercel@59.16.0 deploy --prod --yes --scope albertshineys-projects
+pnpm dlx vercel@59.16.0 link --yes --project revamp-JOB_ID --scope SCOPE
+pnpm dlx vercel@59.16.0 deploy --prod --yes --scope SCOPE
 ```
 
 `--prod` is acceptable for this isolated concept project so the recipient receives a public URL; it must never refer to the business's real site or Delivery's existing platform/agency/client projects. Verify `.vercel/project.json` refers to the intended new project before deploying. The quick generator already outputs a complete static site. Deploy that `site/` directory with no install or build command. Its `vercel.json` provides the SPA fallback and noindex headers. Verify that `.vercel/project.json` belongs to the intended new isolated project before any subsequent deploy. Never run npm in the generated site or use the legacy per-business prerender workflow.
@@ -53,4 +53,4 @@ Capture and verify the returned URL. Open the homepage and a service route witho
 
 ## Continue through outreach
 
-After verifying the public preview, read `outreach.md`, copy its fixed message exactly with the public preview URL and optional subject business name, then submit it through the original business contact form. Record the attempt through `contact-begin` and `contact-finish` as documented. A draft or a local preview does not complete an authorized full run. If the original form cannot be used for an otherwise qualified business, finish its verified preview and [manual outreach handoff](manual-outreach.md), then continue the batch; do not silently switch to email or SMS.
+After verifying the public preview, render the draft with `tools/sender.py message` and hand it off with [manual outreach](manual-outreach.md); that completes the job in this fork's default drafts mode. Submission through `contact-begin`/`contact-finish` applies only when the operator has enabled `outreach.auto_submit` and asked for it (see [outreach](outreach.md)). A local preview alone does not complete a job, and never switch to email or SMS.

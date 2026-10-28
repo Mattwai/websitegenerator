@@ -19,6 +19,7 @@ from quick_site import create as create_quick_site, TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
 DB = Path(os.environ.get('REVAMP_DB', ROOT / 'data' / 'revamp.sqlite3'))
+SETTINGS = ROOT / 'settings.json'
 STAGES = ['queued', 'reviewing', 'extracting', 'building', 'checking', 'deploying', 'ready', 'contacting', 'complete', 'sent', 'uncertain', 'blocked', 'skipped', 'manual']
 NEXT = {'queued': ['reviewing'], 'reviewing': ['extracting'], 'extracting': ['building'], 'building': ['checking'], 'checking': ['building', 'deploying'], 'deploying': ['checking', 'ready'], 'ready': ['contacting'], 'contacting': ['complete', 'sent', 'uncertain', 'blocked']}
 
@@ -124,7 +125,7 @@ def batch(industry, city, requested_count=5):
     with connect() as c:
         bid = ident('batch')
         c.execute('INSERT INTO batches(id,industry,city,status,created_at,requested_count) VALUES (?,?,?,?,?,?)', (bid, industry.strip(), city.strip(), 'queued', now(), requested_count))
-        event(c, None, f'Batch queued: {requested_count} websites for {industry.strip()} in {city.strip()}. Waiting for Codex coordinator.')
+        event(c, None, f'Batch queued: {requested_count} websites for {industry.strip()} in {city.strip()}. Waiting for a coordinator agent.')
         return {'id': bid, 'status': 'queued', 'requested_count': requested_count}
 
 def cancel_batch(bid, reason):
@@ -215,7 +216,13 @@ def update(jid, worker, stage=None, detail='', fields=None):
         event(c,jid,detail or f'Stage: {new}')
         return {'id':jid,'stage':new}
 
+def auto_submit_enabled():
+    try: return json.loads(SETTINGS.read_text()).get('outreach',{}).get('auto_submit') is True
+    except (OSError,ValueError,AttributeError): return False
+
 def contact_begin(jid,worker,message,form_url):
+    # Drafts by default: a form submission needs an explicit opt-in in settings.json.
+    if not auto_submit_enabled(): raise ValueError('Automatic form submission is off (settings.json outreach.auto_submit is not true). Hand the draft to the operator with manual-outreach.')
     if not message.strip(): raise ValueError('Message is empty')
     domain(form_url)
     with connect() as c:

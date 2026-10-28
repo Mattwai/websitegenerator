@@ -1,0 +1,9 @@
+{
+  "name": "<Your full name>",
+  "first_name": "<Your first name>",
+  "email": "<you@yourdomain>",
+  "phone": "<+61 4xx xxx xxx, or delete this line>",
+  "business_name": "<Optional trading name / ABN, or delete this line>",
+  "offer": "<One line: what you're offering, e.g. The website is free; you only pay for hosting.>",
+  "vercel_scope": "<Your Vercel team/scope slug, from: pnpm dlx vercel@59.16.0 teams ls>"
+}

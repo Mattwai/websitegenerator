@@ -12,9 +12,22 @@ control=importlib.util.module_from_spec(spec); spec.loader.exec_module(control)
 class LedgerTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(); self.old=control.DB; control.DB=Path(self.tmp.name)/'test.db'
+        # Most tests exercise the submission path, so opt in explicitly; the default-off case is tested below.
+        self.old_settings=control.SETTINGS; control.SETTINGS=Path(self.tmp.name)/'settings.json'
+        control.SETTINGS.write_text(json.dumps({'outreach':{'auto_submit':True}}))
         self.bid=control.batch('Plumbers','Boston')['id']
     def tearDown(self):
-        control.DB=self.old; self.tmp.cleanup()
+        control.DB=self.old; control.SETTINGS=self.old_settings; self.tmp.cleanup()
+    def test_auto_submit_is_off_unless_enabled(self):
+        jid=self.ready()
+        control.SETTINGS.write_text(json.dumps({'outreach':{}}))
+        with self.assertRaisesRegex(ValueError,'manual-outreach'): control.contact_begin(jid,'worker','Hello','https://business0.example/contact')
+        self.assertEqual(control.snapshot()['jobs'][0]['stage'],'ready')
+        control.manual_outreach(jid,'worker','Drafts only','Proposal: https://preview.example')
+        self.assertEqual(control.snapshot()['jobs'][0]['stage'],'manual')
+    def test_shipped_settings_keep_auto_submit_off(self):
+        shipped=json.loads((Path(__file__).parents[1]/'settings.json').read_text())
+        self.assertIs(shipped['outreach']['auto_submit'],False)
     def add(self,n=0): return control.add(self.bid,f'Business {n}',f'https://business{n}.example')['id']
     def ready(self):
         jid=self.add(); control.claim(self.bid,'worker')

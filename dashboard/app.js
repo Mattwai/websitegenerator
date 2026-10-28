@@ -61,7 +61,7 @@ function render() {
   refreshWorkerAges();
   const queuedBatches = batches.filter(batch => (batchFilter === 'all' || String(batch.id) === batchFilter) && ['queued', 'pending'].includes(batch.status));
   $('#queue-status').hidden = !queuedBatches.length;
-  $('#queue-status').textContent = `${queuedBatches.length} batch${queuedBatches.length === 1 ? '' : 'es'} queued. Ask Codex to run them.`;
+  $('#queue-status').textContent = `${queuedBatches.length} batch${queuedBatches.length === 1 ? '' : 'es'} queued. Ask Claude Code to run them.`;
   if (!jobs.length) {
     const filtered = state.jobs.length > 0 && (batchFilter !== 'all' || stageFilter !== 'all');
     $('#jobs').innerHTML = `<div class="empty"><div><div class="empty-mark" aria-hidden="true">✳</div><h3>${filtered ? 'No matches' : 'No businesses yet'}</h3><p>${filtered ? 'Try another filter.' : 'Queue your first batch above.'}</p></div></div>`;
@@ -125,7 +125,7 @@ $('#batch-form').addEventListener('submit', async (event) => {
     const response = await fetch('/api/batches', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ industry, city, requested_count: requestedCount }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'The batch could not be queued.');
-    $('#form-message').textContent = `${requestedCount} completed outreach jobs for ${industry} in ${city} queued. Ask Codex to run it.`;
+    $('#form-message').textContent = `${requestedCount} completed outreach jobs for ${industry} in ${city} queued. Ask Claude Code to run it.`;
     form.reset();
     form.elements.requested_count.value = '5';
     previousSignature = '';

@@ -290,7 +290,7 @@ function Social() {
             <p>{"From a small electrical update to plans for a renovation, tell us what you need. Call or email to discuss your project and the next steps."}</p>
           </Reveal>
           <Reveal delay={160} className="mt-8">
-            <span className="text-muted">Website concept by Albert</span>
+            <span className="text-muted">Website concept preview</span>
           </Reveal>
         </div>
         <Reveal delay={120} className="lg:col-span-6">
