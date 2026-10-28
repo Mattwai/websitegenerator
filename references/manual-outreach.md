@@ -4,7 +4,7 @@
 
 This changes contact eligibility, not business qualification. Duplicates, previously contacted businesses, opt-outs/no-solicitation, visually strong sites and out-of-scope businesses remain skipped. Deployment/QA failures remain blocked until resolved. Manual is not an alternative route around an actual approval rejection; follow the applicable rule and surface required human action. Ambiguous prior submissions remain uncertain, never a prompt to send again.
 
-After a verified public website reaches `ready`, render the draft with `python3 tools/sender.py message --preview-url … --business … --out runs/JOB_ID/outreach.txt`. Then:
+After a verified public website reaches `ready`, render the draft with `python3 tools/sender.py message --preview-url … --business … --out runs/JOB_ID/outreach.txt`. For a `services` job (`offer_kind: services`), no site is built: once the job is qualified (stage `extracting` with reason, two findings, sources and screenshots), render with `--template services` (see [outreach](outreach.md)) and hand off directly. The ledger allows this only for `services` jobs. Then:
 
 ```sh
 python3 tools/control.py manual-outreach --job JOB_ID --worker WORKER_ID --reason 'No usable original contact form; please send the prepared proposal manually.' --message-file runs/JOB_ID/outreach.txt --email 'verified@business.example' --phone '+16175550123'

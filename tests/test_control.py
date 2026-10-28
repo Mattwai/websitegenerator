@@ -25,6 +25,28 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(control.snapshot()['jobs'][0]['stage'],'ready')
         control.manual_outreach(jid,'worker','Drafts only','Proposal: https://preview.example')
         self.assertEqual(control.snapshot()['jobs'][0]['stage'],'manual')
+    def qualified_services_job(self):
+        jid=self.add(); control.claim(self.bid,'worker')
+        control.update(jid,'worker','extracting',fields={'offer_kind':'services','reason':'Busy business, weak mobile site',
+            'qualification':{'findings':['Mobile performance score 23/100','No viewport tag']},
+            'source_urls':['https://business0.example'],'screenshots':['before.png']})
+        return jid
+    def test_services_offer_drafts_without_a_preview(self):
+        jid=self.qualified_services_job()
+        control.manual_outreach(jid,'worker','Draft ready: contact form','Hi, I help local businesses answer every enquiry.')
+        job=control.snapshot()['jobs'][0]
+        self.assertEqual(job['stage'],'manual'); self.assertEqual(job['contact_status'],'manual_required')
+    def test_services_offer_still_needs_qualification(self):
+        jid=self.add(); control.claim(self.bid,'worker')
+        control.update(jid,'worker','extracting',fields={'offer_kind':'services','source_urls':['https://business0.example']})
+        with self.assertRaises(ValueError): control.manual_outreach(jid,'worker','Draft','Hello')
+    def test_offer_kind_validated(self):
+        jid=self.add(); control.claim(self.bid,'worker')
+        with self.assertRaises(ValueError): control.update(jid,'worker',fields={'offer_kind':'crypto'})
+    def test_website_offer_still_requires_preview(self):
+        jid=self.add(); control.claim(self.bid,'worker')
+        control.update(jid,'worker','extracting',fields={'reason':'x','qualification':{'findings':['a','b']},'source_urls':['https://business0.example'],'screenshots':['s.png']})
+        with self.assertRaises(ValueError): control.manual_outreach(jid,'worker','Draft','Hello')
     def test_shipped_settings_keep_auto_submit_off(self):
         shipped=json.loads((Path(__file__).parents[1]/'settings.json').read_text())
         self.assertIs(shipped['outreach']['auto_submit'],False)

@@ -52,6 +52,22 @@ class SenderTests(unittest.TestCase):
         self.assertEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
         self.assertIn('https://p.example', out.read_text())
         self.assertNotEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
+    def test_services_template_uses_vars_and_needs_no_preview(self):
+        subject, body = sender.render(sender.load(self.write(VALID)), template='services', business='Bright Electrical',
+                                      variables={'rating': '4.8', 'reviews': '212', 'mobile_score': '23',
+                                                 'gap': 'there is no way to book online'})
+        for expected in ('Bright Electrical', '212 reviews', '23/100', 'no way to book online', 'Sam Operator',
+                         "won't contact you again"):
+            self.assertIn(expected, body)
+        self.assertNotIn('{', body)
+        self.assertIn('Bright Electrical', subject)
+    def test_missing_template_variable_is_named(self):
+        with self.assertRaisesRegex(ValueError, 'mobile_score'):
+            sender.render(sender.load(self.write(VALID)), template='services', business='B',
+                          variables={'rating': '4.8', 'reviews': '2', 'gap': 'x'})
+    def test_unknown_template_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'template'):
+            sender.render(sender.load(self.write(VALID)), 'https://p.example', template='../../etc/passwd')
     def test_no_personal_details_tracked(self):
         settings = json.loads((ROOT / 'settings.json').read_text())
         self.assertNotIn('sender', settings)

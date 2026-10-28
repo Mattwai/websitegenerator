@@ -32,7 +32,7 @@ Allowed path:
 QA repairs may go checking → building, or deploying → checking. Pre-contact stages may end blocked or skipped. `contacting`, `complete`, `sent` and `uncertain` are controlled by contact commands. Terminal jobs release worker capacity. Once a worker ends, the coordinator starts/follows up that worker for the next queued job.
 
 `update --fields FILE` merges a JSON object into the job's data. Accepted keys:
-`outreach_mode`, `contact_email`, `contact_phone`, `reason`, `preview_url`, `qa_passed`, `preview_verified`, `source_urls`, `screenshots`, `browser_id`, `tab_id`, `workspace`, `booking_url`, `logo_decision`, `cost`, `failure`, `contact_url`, `qualification`, `seo_checked`.
+`outreach_mode`, `contact_email`, `contact_phone`, `offer_kind` (`website` or `services`), `pagespeed` (path to the summary JSON), `places` (place id, rating, review count), `reason`, `preview_url`, `qa_passed`, `preview_verified`, `source_urls`, `screenshots`, `browser_id`, `tab_id`, `workspace`, `booking_url`, `logo_decision`, `cost`, `failure`, `contact_url`, `qualification`, `seo_checked`.
 
 Evidence example (supply real observations):
 ```json

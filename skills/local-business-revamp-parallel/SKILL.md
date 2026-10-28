@@ -13,8 +13,8 @@ Get industry, location (city or state) and count (default 5). For a state, the c
 
 ## Roles
 
-**Coordinator (you).** Owns the Chrome DevTools MCP browser exclusively, because it's one shared Chrome and its page selection and viewport are global. You do every browser step in sequence:
-- Discovery searches per city, from the configured start page (default 10), recording queries and pages covered.
+**Coordinator (you).** Runs discovery with `tools/places.py` per city, which needs no browser, and records queries and result counts in `scope.json`. Also owns the Chrome DevTools MCP browser exclusively, because it's one shared Chrome and its page selection and viewport are global. You do every browser step in sequence:
+- Fallback Google discovery from the configured start page, only when Places is unavailable.
 - Ambiguous form checks and narrow-viewport checks, resetting emulation afterwards.
 - Public-preview verification of each deployed site.
 
@@ -28,8 +28,8 @@ You also own the ledger writes `add`, `claim` and `alias`, dedupe across cities 
 
 Typical assignments:
 
-1. **Screen**: run Firecrawl `site_assets.py scrape --screen` + `scout_screen.py` for a candidate, `Read` the saved screenshot, and return two concrete visual findings, contact routes with sources, the brand color and a qualify/skip recommendation. Write results to `runs/scouting/BATCH_ID/CITY_ID/<domain>/`. No ledger writes.
-2. **Build and deploy**: for a claimed job, advance the ledger stages, run `./website …` with verified facts, record `workspace`, deploy `site/` to `revamp-JOB_ID` in the operator's `vercel_scope`, then return the preview URL. You verify it in the browser, set `preview_url` / `preview_verified`, and move it to `ready`.
+1. **Screen**: run `tools/pagespeed.py audit` (mobile) and Firecrawl `site_assets.py scrape --screen` + `scout_screen.py` for a candidate, `Read` the saved screenshot, and return PageSpeed scores and findings, at least one visual finding of its own, observed service gaps (for a `services` offer), contact routes with sources, the brand color and a qualify/skip recommendation. Write results to `runs/scouting/BATCH_ID/CITY_ID/<domain>/`. No ledger writes.
+2. **Build and deploy** (`website` offer only; a `services` job skips straight to drafting): for a claimed job, advance the ledger stages, run `./website …` with verified facts, record `workspace`, deploy `site/` to `revamp-JOB_ID` in the operator's `vercel_scope`, then return the preview URL. You verify it in the browser, set `preview_url` / `preview_verified`, and move it to `ready`.
 3. **Draft**: for a `ready` job, run `tools/sender.py message` then `control.py manual-outreach` with the verified routes, and return the result.
 
 Run independent assignments in parallel by sending several `Agent` calls in one message. Keep at most `requested_workers` from settings running at once, matched by `control.py capacity N`. The ledger's owner IDs are locks, not extra agents.

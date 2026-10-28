@@ -41,7 +41,11 @@
     "zip",
     "theme_color"
   ],
+  "default_offer_kind": "website",
   "scouting": {
+    "discovery": "places",
+    "places_region": "au",
+    "min_reviews_for_services": 20,
     "discovery_start_page": 10,
     "screening_mode": "firecrawl-first",
     "initial_pages_per_business": 2,

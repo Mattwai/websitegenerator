@@ -2,13 +2,19 @@
 
 ## The message
 
-The message is `references/outreach-template.txt`, rendered with the operator's details from the gitignored `sender.local.json`:
+Messages are templates in `references/templates/`, rendered with the operator's details from the gitignored `sender.local.json`. Each template's first line is its subject. Every `{placeholder}` must be filled, or `sender.py` refuses.
+
+| Template | Offer | Fill with |
+|---|---|---|
+| `website` | A free preview site (`offer_kind: website`) | `--preview-url` (verified https preview), `--business` |
+| `services` | Other services such as AI or lead gen (`offer_kind: services`), no preview built | `--business`, `--var rating=… --var reviews=…` (from Places), `--var mobile_score=…` (PageSpeed mobile performance), `--var gap='…'` (one **observed** gap, e.g. "there is no way to book online") |
 
 ```sh
 python3 tools/sender.py message --preview-url 'https://VERIFIED-PREVIEW' --business 'Business Name' --out runs/JOB_ID/outreach.txt
+python3 tools/sender.py message --template services --business 'Business Name' --var rating=4.8 --var reviews=212 --var mobile_score=23 --var gap='there is no way to book online' --out runs/JOB_ID/outreach.txt
 ```
 
-Use only a verified public `https://` preview URL. `sender.py` refuses to overwrite an existing draft. Don't hand-edit the rendered draft to add observed issues, "I checked your website", SEO claims or custom praise: visual findings stay internal evidence. Keep the sender identification and the opt-out line. Change the template wording only when the operator asks. Don't mimic a customer requesting service.
+Every value must come from saved evidence: Places for rating and reviews, `pagespeed-mobile.json` for the score, and your own observation of the site for the gap. Never write a gap you didn't see. The operator adds a new template by dropping a `.txt` file into that folder. Use only a verified public `https://` preview URL. `sender.py` refuses to overwrite an existing draft. Don't hand-edit the rendered draft to add observed issues, "I checked your website", SEO claims or custom praise: visual findings stay internal evidence. Keep the sender identification and the opt-out line. Change the template wording only when the operator asks. Don't mimic a customer requesting service.
 
 ## Default: hand the draft to the operator
 

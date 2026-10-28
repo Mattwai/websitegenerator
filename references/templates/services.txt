@@ -1,0 +1,17 @@
+Subject: A quick idea for {business}
+
+Hi,
+
+I came across {business} on Google: {rating} stars from {reviews} reviews, so customers clearly rate you.
+
+When I checked your website on a phone it scored {mobile_score}/100 on Google's own speed test, and {gap}. That usually means some of the people who find you online give up before they call or book.
+
+{offer}
+
+If that's worth a 10-minute chat, {contact_line}.
+
+Best,
+{first_name}
+{signature}
+
+Not interested? Reply "no thanks" and I won't contact you again.

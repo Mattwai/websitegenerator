@@ -20,6 +20,8 @@ from quick_site import create as create_quick_site, TEMPLATES
 ROOT = Path(__file__).resolve().parents[1]
 DB = Path(os.environ.get('REVAMP_DB', ROOT / 'data' / 'revamp.sqlite3'))
 SETTINGS = ROOT / 'settings.json'
+# 'website' pitches a built preview; 'services' pitches other work (AI, lead gen) and needs no preview.
+OFFER_KINDS = ('website', 'services')
 STAGES = ['queued', 'reviewing', 'extracting', 'building', 'checking', 'deploying', 'ready', 'contacting', 'complete', 'sent', 'uncertain', 'blocked', 'skipped', 'manual']
 NEXT = {'queued': ['reviewing'], 'reviewing': ['extracting'], 'extracting': ['building'], 'building': ['checking'], 'checking': ['building', 'deploying'], 'deploying': ['checking', 'ready'], 'ready': ['contacting'], 'contacting': ['complete', 'sent', 'uncertain', 'blocked']}
 
@@ -195,8 +197,9 @@ def claim(bid, worker):
 def update(jid, worker, stage=None, detail='', fields=None):
     fields = fields or {}
     if not isinstance(fields,dict): raise ValueError('Fields must be a JSON object')
-    allowed = {'reason','preview_url','qa_passed','preview_verified','source_urls','screenshots','browser_id','tab_id','workspace','booking_url','logo_decision','cost','failure','contact_url','qualification','seo_checked','outreach_mode','contact_email','contact_phone'}
+    allowed = {'reason','preview_url','qa_passed','preview_verified','source_urls','screenshots','browser_id','tab_id','workspace','booking_url','logo_decision','cost','failure','contact_url','qualification','seo_checked','outreach_mode','contact_email','contact_phone','offer_kind','pagespeed','places'}
     if set(fields)-allowed: raise ValueError('Unknown fields: '+str(set(fields)-allowed))
+    if 'offer_kind' in fields and fields['offer_kind'] not in OFFER_KINDS: raise ValueError('offer_kind must be one of: '+', '.join(OFFER_KINDS))
     with connect() as c:
         j=own(c,jid,worker)
         new=stage or j['stage']
@@ -261,12 +264,16 @@ def manual_outreach(jid, worker, reason, message, email='', phone=''):
     with connect() as c:
         j = own(c, jid, worker)
         data = json.loads(j['data'])
-        if j['stage'] != 'ready' or data.get('qa_passed') is not True or data.get('preview_verified') is not True or not j['preview_url'].startswith('https://'):
+        services = data.get('offer_kind') == 'services'
+        if services:
+            if j['stage'] not in ('extracting', 'building', 'checking', 'deploying', 'ready'):
+                raise ValueError('A services draft needs a qualified job (extracting stage or later)')
+        elif j['stage'] != 'ready' or data.get('qa_passed') is not True or data.get('preview_verified') is not True or not j['preview_url'].startswith('https://'):
             raise ValueError('Manual outreach requires a ready, QA-passed, verified public website')
         if c.execute('SELECT 1 FROM submissions WHERE job_id=?', (jid,)).fetchone():
             raise ValueError('A reserved/attempted submission cannot become manual outreach automatically')
-        if not data.get('source_urls') or j['preview_url'] not in message:
-            raise ValueError('Contact sources and the verified preview URL in the message are required')
+        if not data.get('source_urls') or (not services and j['preview_url'] not in message):
+            raise ValueError('Contact sources (and, for a website offer, the verified preview URL in the message) are required')
         qualification = data.get('qualification') or {}
         findings = qualification.get('findings', []) if isinstance(qualification, dict) else []
         if not j['reason'] or not data.get('screenshots') or len([f for f in findings if isinstance(f, str) and f.strip()]) < 2:
