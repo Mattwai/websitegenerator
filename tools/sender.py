@@ -60,7 +60,8 @@ def render(sender, preview_url='', business='', template='website', variables=No
         contact_line = f"text me on {sender['phone']} or email {sender['email']}"
     else:
         contact_line = f"email me at {sender['email']}"
-    values = {**(variables or {}), 'offer': sender['offer'], 'contact_line': contact_line,
+    variables = variables or {}
+    values = {**variables, 'offer': variables.get('offer') or sender['offer'], 'contact_line': contact_line,
               'first_name': sender['first_name'],
               'signature': sender['name'] + (f", {sender['business_name']}" if sender.get('business_name') else ''),
               'business': business or 'your business'}

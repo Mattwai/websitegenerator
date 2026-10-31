@@ -61,6 +61,15 @@ class SenderTests(unittest.TestCase):
             self.assertIn(expected, body)
         self.assertNotIn('{', body)
         self.assertIn('Bright Electrical', subject)
+    def test_offer_can_be_overridden_per_business(self):
+        _, body = sender.render(sender.load(self.write(VALID)), template='services', business='B',
+                                variables={'rating': '5', 'reviews': '9', 'mobile_score': '40', 'gap': 'x',
+                                           'offer': 'A per-business offer.'})
+        self.assertIn('A per-business offer.', body)
+    def test_services_template_names_lighthouse_not_pagespeed(self):
+        _, body = sender.render(sender.load(self.write(VALID)), template='services', business='B',
+                                variables={'rating': '5', 'reviews': '9', 'mobile_score': '40', 'gap': 'x'})
+        self.assertIn("Google's Lighthouse test", body)
     def test_missing_template_variable_is_named(self):
         with self.assertRaisesRegex(ValueError, 'mobile_score'):
             sender.render(sender.load(self.write(VALID)), template='services', business='B',

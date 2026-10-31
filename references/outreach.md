@@ -7,7 +7,7 @@ Messages are templates in `references/templates/`, rendered with the operator's 
 | Template | Offer | Fill with |
 |---|---|---|
 | `website` | A free preview site (`offer_kind: website`) | `--preview-url` (verified https preview), `--business` |
-| `services` | Other services such as AI or lead gen (`offer_kind: services`), no preview built | `--business`, `--var rating=… --var reviews=…` (from Places), `--var mobile_score=…` (PageSpeed mobile performance), `--var gap='…'` (one **observed** gap, e.g. "there is no way to book online") |
+| `services` | Other services such as AI or lead gen (`offer_kind: services`), no preview built | `--business`, `--var rating=… --var reviews=…` (from Places), `--var mobile_score=…` (PageSpeed mobile performance), `--var gap='…'` (one **observed** gap, e.g. "there is no way to book online"); optional `--var offer='…'` replaces the sender's default offer line for this one business |
 
 ```sh
 python3 tools/sender.py message --preview-url 'https://VERIFIED-PREVIEW' --business 'Business Name' --out runs/JOB_ID/outreach.txt

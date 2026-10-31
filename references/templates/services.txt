@@ -4,7 +4,7 @@ Hi,
 
 I came across {business} on Google: {rating} stars from {reviews} reviews, so customers clearly rate you.
 
-When I checked your website on a phone it scored {mobile_score}/100 on Google's own speed test, and {gap}. That usually means some of the people who find you online give up before they call or book.
+When I checked your website on a phone it scored {mobile_score}/100 on Google's Lighthouse test, and {gap}. That usually means some of the people who find you online give up before they call or book.
 
 {offer}
 
